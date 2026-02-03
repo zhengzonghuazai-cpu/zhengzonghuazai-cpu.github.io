@@ -1,6 +1,6 @@
 // ========== 配置区域（请替换为你的 Supabase 信息）==========
-const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL'; // ← 替换
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // ← 替换
+const SUPABASE_URL = 'https://njobhfrtovdqudwhjxof.supabase.co'; // ← 替换
+const SUPABASE_ANON_KEY = 'sb_publishable_JvMHiszFmaw6h2eCWDYulg_9OWYZAVn'; // ← 替换
 // ========================================================
 
 import { createApp, ref, onMounted, computed } from 'https://cdn.jsdelivr.net/npm/vue@3/dist/vue.esm-browser.js';
