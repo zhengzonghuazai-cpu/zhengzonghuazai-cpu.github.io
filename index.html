@@ -3,14 +3,64 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>映园春晓小区业主议事厅</title>
-  <!-- Tailwind CSS -->
+  <title>邻里社区论坛</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Supabase SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script type="module" src="/app.js"></script>
+  <style>
+    .fade-enter-active, .fade-leave-active {
+      transition: opacity 0.3s ease;
+    }
+    .fade-enter-from, .fade-leave-to {
+      opacity: 0;
+    }
+  </style>
 </head>
-<body class="bg-gray-50 font-sans">
-  <div id="app" class="min-h-screen"></div>
+<body class="bg-gray-50 min-h-screen">
+  <div id="app" class="min-h-screen flex flex-col">
+    <!-- 顶部导航栏 -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+      <div class="max-w-6xl mx-auto px-4">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <h1 class="text-xl font-bold text-blue-600">🏘️ 邻里社区</h1>
+          </div>
+          
+          <div class="flex items-center space-x-4">
+            <a href="#/" class="text-gray-700 hover:text-blue-600">首页</a>
+            <a href="#/forum" class="text-gray-700 hover:text-blue-600">论坛</a>
+            <a href="#/polls" class="text-gray-700 hover:text-blue-600">投票</a>
+            
+            <div v-if="user" class="flex items-center space-x-2">
+              <span class="text-sm text-gray-600">欢迎, {{ user.user_metadata?.name || '用户' }}</span>
+              <button @click="logout" class="text-red-500 hover:text-red-700 text-sm">退出</button>
+            </div>
+            <div v-else>
+              <a href="#/login" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">登录</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- 主内容区域 -->
+    <main class="flex-grow">
+      <transition name="fade" mode="out-in">
+        <component :is="currentView" :user="user" :supabase="supabase" />
+      </transition>
+    </main>
+
+    <!-- 底部 -->
+    <footer class="bg-gray-800 text-white py-6 mt-12">
+      <div class="max-w-6xl mx-auto px-4 text-center">
+        <p>&copy; 2026 邻里社区论坛 - 免费开源社区平台</p>
+        <div class="mt-2 flex justify-center space-x-4">
+          <a href="#" class="hover:text-blue-300">关于我们</a>
+          <a href="#" class="hover:text-blue-300">隐私政策</a>
+          <a href="#" class="hover:text-blue-300">联系我们</a>
+        </div>
+      </div>
+    </footer>
+  </div>
 </body>
 </html>
