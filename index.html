@@ -5,14 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>邻里社区论坛</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script type="module" src="/app.js"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <style>
     .fade-enter-active, .fade-leave-active {
       transition: opacity 0.3s ease;
     }
     .fade-enter-from, .fade-leave-to {
       opacity: 0;
+    }
+    /* 静态样式替代 Tailwind CDN */
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .bg-white { background-color: #ffffff; }
+    .bg-gray-50 { background-color: #f9fafb; }
+    .bg-blue-500 { background-color: #3b82f6; }
+    .bg-gradient-to-r { background: linear-gradient(to right, #3b82f6, #8b5cf6); }
+    .shadow { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); }
+    .rounded-lg { border-radius: 0.5rem; }
+    .p-6 { padding: 1.5rem; }
+    .mb-6 { margin-bottom: 1.5rem; }
+    .text-center { text-align: center; }
+    .font-bold { font-weight: bold; }
+    .text-2xl { font-size: 1.5rem; }
+    .hover\:shadow-lg:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+    .transition { transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform; }
+    .grid { display: grid; }
+    .gap-6 { gap: 1.5rem; }
+    .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+    @media (min-width: 768px) {
+      .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (min-width: 1024px) {
+      .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     }
   </style>
 </head>
@@ -30,14 +53,7 @@
             <a href="#/" class="text-gray-700 hover:text-blue-600">首页</a>
             <a href="#/forum" class="text-gray-700 hover:text-blue-600">论坛</a>
             <a href="#/polls" class="text-gray-700 hover:text-blue-600">投票</a>
-            
-            <div v-if="user" class="flex items-center space-x-2">
-              <span class="text-sm text-gray-600">欢迎, {{ user.user_metadata?.name || '用户' }}</span>
-              <button @click="logout" class="text-red-500 hover:text-red-700 text-sm">退出</button>
-            </div>
-            <div v-else>
-              <a href="#/login" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">登录</a>
-            </div>
+            <a href="#/login" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">登录</a>
           </div>
         </div>
       </div>
@@ -45,22 +61,248 @@
 
     <!-- 主内容区域 -->
     <main class="flex-grow">
-      <transition name="fade" mode="out-in">
-        <component :is="currentView" :user="user" :supabase="supabase" />
-      </transition>
+      <div class="container py-8">
+        <component :is="currentView" />
+      </div>
     </main>
 
     <!-- 底部 -->
     <footer class="bg-gray-800 text-white py-6 mt-12">
       <div class="max-w-6xl mx-auto px-4 text-center">
         <p>&copy; 2026 邻里社区论坛 - 免费开源社区平台</p>
-        <div class="mt-2 flex justify-center space-x-4">
-          <a href="#" class="hover:text-blue-300">关于我们</a>
-          <a href="#" class="hover:text-blue-300">隐私政策</a>
-          <a href="#" class="hover:text-blue-300">联系我们</a>
-        </div>
       </div>
     </footer>
   </div>
+
+  <script>
+    // ==================== 组件定义 ====================
+    const { createApp, shallowRef, markRaw, onMounted } = Vue;
+
+    const HomeView = markRaw({
+      template: `
+        <div>
+          <!-- 英雄区域 -->
+          <section class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-8 text-white mb-8">
+            <h2 class="text-3xl font-bold mb-4">欢迎来到邻里社区</h2>
+            <p class="text-lg mb-6">分享生活点滴，参与社区决策，共建美好家园</p>
+            <div class="flex space-x-4">
+              <a href="#/forum" class="bg-white text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100">开始发帖</a>
+              <a href="#/polls" class="bg-transparent border-2 border-white px-6 py-3 rounded-lg font-medium hover:bg-white hover:text-blue-600">参与投票</a>
+            </div>
+          </section>
+
+          <!-- 热门帖子 -->
+          <section class="mb-12">
+            <h3 class="text-2xl font-bold mb-6 text-gray-800">🔥 热门帖子</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
+                <h4 class="font-semibold text-lg mb-2">关于小区停车收费的讨论</h4>
+                <p class="text-gray-600 text-sm mb-4">最近小区停车收费政策引起了大家的关注...</p>
+                <div class="flex justify-between items-center text-xs text-gray-500">
+                  <span>张三</span>
+                  <span>2026-01-15</span>
+                </div>
+              </div>
+              <div class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
+                <h4 class="font-semibold text-lg mb-2">社区活动征集志愿者</h4>
+                <p class="text-gray-600 text-sm mb-4">下周末社区将举办亲子活动，现征集...</p>
+                <div class="flex justify-between items-center text-xs text-gray-500">
+                  <span>李四</span>
+                  <span>2026-01-14</span>
+                </div>
+              </div>
+              <div class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
+                <h4 class="font-semibold text-lg mb-2">电梯维护通知</h4>
+                <p class="text-gray-600 text-sm mb-4">1号楼电梯将于本周五进行例行维护...</p>
+                <div class="flex justify-between items-center text-xs text-gray-500">
+                  <span>物业</span>
+                  <span>2026-01-13</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 功能介绍 -->
+          <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="bg-white p-6 rounded-lg shadow text-center">
+              <div class="text-4xl mb-4">💬</div>
+              <h3 class="text-xl font-semibold mb-2">社区论坛</h3>
+              <p class="text-gray-600">分享话题，交流观点，结识邻居</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow text-center">
+              <div class="text-4xl mb-4">📊</div>
+              <h3 class="text-xl font-semibold mb-2">在线投票</h3>
+              <p class="text-gray-600">参与社区决策，表达你的意见</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow text-center">
+              <div class="text-4xl mb-4">🔒</div>
+              <h3 class="text-xl font-semibold mb-2">身份核实</h3>
+              <p class="text-gray-600">真实业主认证，营造可信环境</p>
+            </div>
+          </section>
+        </div>
+      `
+    });
+
+    const ForumView = markRaw({
+      setup() {
+        const posts = [
+          {
+            id: 1,
+            title: "小区绿化改造建议",
+            content: "建议在小区中央花园增加一些座椅，方便老人休息...",
+            author: "王五",
+            time: "2小时前"
+          },
+          {
+            id: 2,
+            title: "关于垃圾分类的讨论",
+            content: "大家对现在的垃圾分类制度有什么看法？...",
+            author: "赵六",
+            time: "5小时前"
+          }
+        ];
+
+        return { posts };
+      },
+      template: `
+        <div>
+          <div class="mb-8">
+            <h2 class="text-2xl font-bold mb-6">💬 社区论坛</h2>
+            
+            <!-- 发帖表单 -->
+            <div class="bg-white p-6 rounded-lg shadow mb-6">
+              <h3 class="font-semibold mb-4">发布新帖子</h3>
+              <input placeholder="帖子标题" class="w-full p-3 border rounded mb-3">
+              <select class="w-full p-3 border rounded mb-3">
+                <option>综合讨论</option>
+                <option>社区新闻</option>
+                <option>求助建议</option>
+                <option>活动组织</option>
+              </select>
+              <textarea placeholder="分享你的想法..." rows="4" class="w-full p-3 border rounded mb-3"></textarea>
+              <button class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">发布帖子</button>
+            </div>
+          </div>
+
+          <!-- 帖子列表 -->
+          <div class="space-y-6">
+            <div v-for="post in posts" :key="post.id" class="bg-white p-6 rounded-lg shadow">
+              <h3 class="text-lg font-semibold mb-2">{{ post.title }}</h3>
+              <p class="text-gray-700 mb-4">{{ post.content }}</p>
+              <div class="flex justify-between items-center text-sm text-gray-500">
+                <span>{{ post.author }}</span>
+                <span>{{ post.time }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+    });
+
+    const PollsView = markRaw({
+      setup() {
+        const polls = [
+          {
+            id: 1,
+            question: "你认为小区最需要改进的设施是什么？",
+            options: ["停车位", "儿童游乐区", "健身器材", "绿化"],
+            votes: [25, 18, 12, 30]
+          }
+        ];
+
+        return { polls };
+      },
+      template: `
+        <div>
+          <h2 class="text-2xl font-bold mb-6">📊 社区投票</h2>
+          
+          <div class="bg-white p-6 rounded-lg shadow mb-8">
+            <h3 class="font-semibold mb-4">创建新投票</h3>
+            <input placeholder="投票问题" class="w-full p-3 border rounded mb-3">
+            <select class="w-full p-3 border rounded mb-3">
+              <option>单选</option>
+              <option>多选</option>
+            </select>
+            <div class="space-y-2 mb-3">
+              <input placeholder="选项 1" class="w-full p-2 border rounded">
+              <input placeholder="选项 2" class="w-full p-2 border rounded">
+              <input placeholder="选项 3" class="w-full p-2 border rounded">
+              <button class="text-blue-500 text-sm">+ 添加选项</button>
+            </div>
+            <button class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600">创建投票</button>
+          </div>
+
+          <div v-for="poll in polls" :key="poll.id" class="bg-white p-6 rounded-lg shadow mb-6">
+            <h3 class="font-semibold text-lg mb-4">{{ poll.question }}</h3>
+            <div class="space-y-2">
+              <div v-for="(option, idx) in poll.options" :key="idx" class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <input type="radio" class="mr-2">
+                  <span>{{ option }}</span>
+                </div>
+                <span class="text-sm text-gray-500">{{ poll.votes[idx] }} 票</span>
+              </div>
+            </div>
+            <div class="mt-4 text-sm text-gray-500">
+              创建者：匿名用户 • 2026-01-15
+            </div>
+          </div>
+        </div>
+      `
+    });
+
+    const LoginView = markRaw({
+      template: `
+        <div class="max-w-md mx-auto mt-12 p-6 bg-white rounded-lg shadow">
+          <h2 class="text-2xl font-bold text-center mb-6">用户登录</h2>
+          
+          <div class="space-y-4">
+            <input type="email" placeholder="邮箱地址" class="w-full p-3 border rounded">
+            <input type="password" placeholder="密码" class="w-full p-3 border rounded">
+            
+            <button class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded font-medium">
+              登录
+            </button>
+          </div>
+
+          <p class="text-center mt-4">
+            <a href="#/register" class="text-blue-500 hover:underline">没有账号？去注册</a>
+          </p>
+        </div>
+      `
+    });
+
+    // ==================== 路由系统 ====================
+    const routes = {
+      '/': HomeView,
+      '/forum': ForumView,
+      '/polls': PollsView,
+      '/login': LoginView
+    };
+
+    const app = createApp({
+      setup() {
+        const currentView = shallowRef(routes['/']);
+
+        const render = () => {
+          const hash = window.location.hash.slice(2) || '/';
+          const routeComponent = routes[hash] || routes['/'];
+          currentView.value = routeComponent;
+        };
+
+        onMounted(() => {
+          render();
+          window.addEventListener('hashchange', render);
+        });
+
+        return {
+          currentView
+        };
+      }
+    });
+
+    app.mount('#app');
+  </script>
 </body>
 </html>
